@@ -10,4 +10,4 @@ For example:
     echo $reader->read('1,234,567.89') // will output หนึ่งล้านสองแสนสามหมื่นสี่พันห้าร้อยหกสิบเจ็ดบาทแปดสิบเก้าสตางค์
 ```
 
-Contributions to features and languages are welcome.
+JS and Ruby versions are coming. Contributions to features and languages are welcome.
