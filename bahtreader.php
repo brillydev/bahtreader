@@ -58,6 +58,8 @@
             // separate dollars and cents for easier working
             list($dollars, $cents) = explode('.', $input, 2);
             
+            $output = $this->spell($dollars);
+            
             // 0 dollar
             if ($dollars == 0)
             {
@@ -66,11 +68,11 @@
                     return 'ศูนย์บาทถ้วน';
                 }
             }
-            
-            $output = $this->spell($dollars);
-            
-            // currency addition
-            $output .= $currency;
+            else
+            {
+                // currency addition
+                $output .= $currency;
+            }
             
             if ($cents == 0)
             {
@@ -163,4 +165,16 @@
             return $output;
         }
     }
+    
+    
+    
+    
+    
+    require('../templates/header.php');
+    echo '<form method="get"><input type="text" name="q" placeholder="number here"><button type="submit">Submit</button></form>';
+    $test = new BahtReader;
+    echo $test->read($_GET['q']);
+
+    require('../templates/footer.php');
+
 ?>
