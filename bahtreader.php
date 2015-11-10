@@ -109,10 +109,14 @@
             $length = strlen($input);
             $pos = ($length - 1) % 6;
             $input = str_split($input);
+            $result = '';
             
             foreach ($input as $digit => $value)
             {
                 $word = $this->words[$value];
+                
+                // value of number up to the point of $pos
+                $result .= $value;
                 
                 // if digit is in the millionth position, fall back to 1
                 // because all wordings will have to restart upon reaching million
@@ -123,7 +127,7 @@
                 elseif ($pos == 0)
                 {
                     // หากเลขคือ 1 อยู่ในหลักล้าน หรือหลักหน่วย และยังมีหลักที่ใหญ่กว่าอยู่ ให้เปลี่ยน 'หนึ่ง' เป็น 'เอ็ด' เพราะไม่อ่าน 'สิบหนึ่ง'
-                    if ($value == 1 && $digit != 0)
+                    if ($value == 1 && $result > 1)
                     {
                         $word = 'เอ็ด';
                     }
