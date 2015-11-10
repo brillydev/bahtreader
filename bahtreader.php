@@ -169,16 +169,4 @@
             return $output;
         }
     }
-    
-    
-    
-    
-    
-    require('../templates/header.php');
-    echo '<form method="get"><input type="text" name="q" placeholder="number here"><button type="submit">Submit</button></form>';
-    $test = new BahtReader;
-    echo $test->read($_GET['q']);
-
-    require('../templates/footer.php');
-
 ?>
