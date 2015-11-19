@@ -4,7 +4,6 @@
      * BahtReader
      * 
      * Converts numbers into words (currently only in Baht).
-     * Only accepts a period (.) as decimal point.
      */
     
     class BahtReader
@@ -19,28 +18,61 @@
          * 
          * Any character present will be deleted.
          * As a result, scientific notations will not work.
-         * 
-         * Currently only accepts period (.) as decimal point.
          */
          
-        public function money_validate($input)
+        public function money_validate($input, $delimiter = ',', $separator = '.')
         {
             // disallow any input with more than 1 period
-            if (substr_count($input, '.') > 1)
+            if (substr_count($input, $separator) > 1)
             {
                 trigger_error('Number contains more than one period (.).', E_USER_ERROR);
                 exit;
             }
             
+            // escape seperator to be used with regex (only works with dot)
+            $escaped_separator = $separator == '.' ? '\.' : $separator;
+            
             // cut out any characters besides numbers (0-9), beginning negative sign (-) and decimal point (.)
-            $input = preg_replace('/(?!^\-)[^\.\d]/', '', ltrim($input));
+            $input = preg_replace('/(?!^\-)[^' . $escaped_separator . '\d]/', '', trim($input));
             
             // ensure decimal is properly rounded
-            list($dollars, $cents) = explode('.', $input, 2);
-            $cents = substr(number_format('0.' . $cents, 2), 1);
+            list($dollars, $cents) = array_pad(explode($separator, $input, 2), 2, 00);
+            $cents = substr(number_format('0' . $separator . $cents, 2), 1);
             $output = $dollars . $cents;
             
             return $output;
+        }
+        
+        /**
+         * Returns both validated and formatted input.
+         * 
+         * Calls money_validate() underneath in process.
+         */
+         
+        public function money_format($input, $delimiter = ',', $separator = '.')
+        {
+            $input = $this->money_validate($input, $delimiter, $separator);
+            
+            // cut decimals away
+            list($dollars, $cents) = explode($separator, $input, 2);
+            
+            $output = '';
+            $length = strlen($dollars);
+            $pos = ($length - 1) % 3;
+            
+            // insert comma at every 3 digits
+            for ($i = 0; $i < $length; $i++) 
+            {
+                $output .= $dollars[$i];
+                
+                if (($pos - $i) % 3 == 0) 
+                {
+                    // stop displaying delimiter at the last digit
+                    $output .= $i == $length - 1 ? '' : $delimiter;
+                }
+            }
+            
+            return $output . $separator . $cents;
         }
         
 
@@ -50,13 +82,13 @@
          * Currently only works with Thai Baht (THB).
          */
          
-        public function read($input, $currency = 'บาท', $sub_currency = 'สตางค์')
+        public function read($input, $currency = 'บาท', $sub_currency = 'สตางค์', $separator = '.')
         {
             // validate input
             $input = $this->money_validate($input);
             
             // separate dollars and cents for easier working
-            list($dollars, $cents) = explode('.', $input, 2);
+            list($dollars, $cents) = explode($separator, $input, 2);
             
             $output = $this->spell($dollars);
             
@@ -98,7 +130,7 @@
             
             // handles negative value
             // cuts negative sign out for easier working
-            if ($dollars < 0)
+            if ($input < 0)
             {
                 $output = 'ลบ';
                 $dollars = substr($input, 1);
