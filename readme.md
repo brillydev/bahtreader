@@ -1,6 +1,6 @@
 BahtReader
 =====
-**Number-to-word conversion library in PHP for multiple usages.**
+**Number-to-word conversion library in PHP.**
 
 To get started, just instantiate a new object and call `read()` method.
 
